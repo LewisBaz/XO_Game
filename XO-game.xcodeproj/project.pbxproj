@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		638E567A26EA6DA1005BB577 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638E567926EA6DA1005BB577 /* StartViewController.swift */; };
+		638E568926EAC79F005BB577 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638E568826EAC79F005BB577 /* Game.swift */; };
+		638E568D26EFD1F7005BB577 /* TurnInvoker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638E568C26EFD1F7005BB577 /* TurnInvoker.swift */; };
+		638E569026EFD2BD005BB577 /* TurnCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638E568F26EFD2BD005BB577 /* TurnCommands.swift */; };
 		DB9970E726E7D5020025C71C /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9970E626E7D5020025C71C /* GameState.swift */; };
 		DB9970EA26E7E8B20025C71C /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9970E926E7E8B20025C71C /* Analytics.swift */; };
 		F874E4712224621100364CAE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F874E4702224621100364CAE /* AppDelegate.swift */; };
@@ -26,6 +30,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		638E567926EA6DA1005BB577 /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
+		638E568826EAC79F005BB577 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		638E568C26EFD1F7005BB577 /* TurnInvoker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnInvoker.swift; sourceTree = "<group>"; };
+		638E568F26EFD2BD005BB577 /* TurnCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnCommands.swift; sourceTree = "<group>"; };
 		DB9970E626E7D5020025C71C /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
 		DB9970E926E7E8B20025C71C /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		F874E46D2224621100364CAE /* XO-game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "XO-game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,6 +65,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		638E569226EFD2C9005BB577 /* Command */ = {
+			isa = PBXGroup;
+			children = (
+				638E568C26EFD1F7005BB577 /* TurnInvoker.swift */,
+				638E568F26EFD2BD005BB577 /* TurnCommands.swift */,
+			);
+			path = Command;
+			sourceTree = "<group>";
+		};
 		DB9970E526E7D4F30025C71C /* GameStates */ = {
 			isa = PBXGroup;
 			children = (
@@ -96,7 +113,10 @@
 				DB9970E526E7D4F30025C71C /* GameStates */,
 				F874E4702224621100364CAE /* AppDelegate.swift */,
 				F874E4722224621100364CAE /* GameViewController.swift */,
+				638E567926EA6DA1005BB577 /* StartViewController.swift */,
 				F874E4F02225DFF700364CAE /* Referee.swift */,
+				638E568826EAC79F005BB577 /* Game.swift */,
+				638E569226EFD2C9005BB577 /* Command */,
 				F874E4E62225CB3F00364CAE /* Models */,
 				F874E4E52225CB3100364CAE /* Views */,
 				F874E4772224621300364CAE /* Assets.xcassets */,
@@ -209,6 +229,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F874E4732224621100364CAE /* GameViewController.swift in Sources */,
+				638E568926EAC79F005BB577 /* Game.swift in Sources */,
+				638E567A26EA6DA1005BB577 /* StartViewController.swift in Sources */,
+				638E568D26EFD1F7005BB577 /* TurnInvoker.swift in Sources */,
 				DB9970EA26E7E8B20025C71C /* Analytics.swift in Sources */,
 				F874E4DD2225C25D00364CAE /* GameboardPosition.swift in Sources */,
 				F874E4DF2225C76000364CAE /* MarkView.swift in Sources */,
@@ -219,6 +242,7 @@
 				F874E4F32225E0B100364CAE /* GameboardSize.swift in Sources */,
 				F874E4E42225CB0700364CAE /* XView.swift in Sources */,
 				DB9970E726E7D5020025C71C /* GameState.swift in Sources */,
+				638E569026EFD2BD005BB577 /* TurnCommands.swift in Sources */,
 				F874E4DB2225C1AC00364CAE /* GameboardView.swift in Sources */,
 				F874E4EF2225DE4500364CAE /* Player.swift in Sources */,
 			);
