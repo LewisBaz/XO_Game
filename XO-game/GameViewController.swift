@@ -15,6 +15,7 @@ class GameViewController: UIViewController {
     @IBOutlet var secondPlayerTurnLabel: UILabel!
     @IBOutlet var winnerLabel: UILabel!
     @IBOutlet var restartButton: UIButton!
+    @IBOutlet weak var showGameButton: UIButton!
     
     lazy var referee = Referee(gameboard: self.gameboard)
     private var gameboard = Gameboard()
@@ -28,6 +29,7 @@ class GameViewController: UIViewController {
     private var gameState = Game.shared.gameState
     private var gameSteps = Game.shared.gameSteps
     var counter = 0
+    var indexToDetermineWinner = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,11 +38,16 @@ class GameViewController: UIViewController {
         case .versusHuman:
             switch gameSteps {
             case .oneByOne: self.goToFirstState()
-            case .fiveByOne: self.goToFiveCountStepState()
+            case .fiveByOne:
+                self.goToFiveCountStepState()
+                self.showGameButton.isUserInteractionEnabled = false
+                self.showGameButton.tintColor = .gray
             }
         case .versusComputer:
             self.goToComputerState()
             self.secondPlayerTurnLabel.text = "Computer"
+            self.showGameButton.isUserInteractionEnabled = false
+            self.showGameButton.tintColor = .gray
         }
         
         gameboardView.onSelectPosition = { [weak self] position in
@@ -54,6 +61,9 @@ class GameViewController: UIViewController {
     }
     
     // MARK: - Actions
+    @IBAction func showGameButtonTapped(_ sender: Any) {
+        self.turnInvoker.work()
+    }
     
     @IBAction func restartButtonTapped(_ sender: UIButton) {
         self.gameboardView.clear()
@@ -69,6 +79,7 @@ class GameViewController: UIViewController {
         self.counter = 0
         Game.positions = [GameboardPosition(column: 0, row: 0), GameboardPosition(column: 0, row: 1), GameboardPosition(column: 0, row: 2), GameboardPosition(column: 1, row: 0), GameboardPosition(column: 1, row: 1), GameboardPosition(column: 1, row: 2), GameboardPosition(column: 2, row: 0), GameboardPosition(column: 2, row: 1), GameboardPosition(column: 2, row: 2)].shuffled()
         Game.steps.removeAll()
+        self.turnInvoker.commands = []
         recordEvent(.restartGame)
     }
     
@@ -118,7 +129,6 @@ class GameViewController: UIViewController {
                 if let winner = self.referee.determineWinner() {
                     self.gameboard.clear()
                     self.gameboardView.clear()
-                    self.turnInvoker.work()
                     self.currentState = WinnerGameState(winner: winner, gameViewController: self)
                     return
                 }
@@ -164,7 +174,7 @@ class GameViewController: UIViewController {
                         if counter == 10 {
                             self.gameboard.clear()
                             self.gameboardView.clear()
-                            self.showFiveStepsForXView()
+                            self.showFiveSteps(player: Player.first, markPrototype: Player.first.markViewPrototype)
                         }
                     }
                 }
@@ -188,24 +198,14 @@ class GameViewController: UIViewController {
         }
     }
     
-    func showFiveStepsForXView() {
-            self.currentState = FiveStepsGameRunningStateForXView(
-                player: Player.first,
-                gameViewController: self,
-                gameboard: self.gameboard,
-                gameboardView: self.gameboardView,
-                markPrototype: Player.first.markViewPrototype
-            )
-    }
-    
-    func showFiveStepsForOView() {
-            self.currentState = FiveStepsGameRunningStateForOView(
-                player: Player.second,
-                gameViewController: self,
-                gameboard: self.gameboard,
-                gameboardView: self.gameboardView,
-                markPrototype: Player.second.markViewPrototype
-            )
+    func showFiveSteps(player: Player, markPrototype: MarkView) {
+        self.currentState = FiveStepsGameRunningState(
+            player: player,
+            gameViewController: self,
+            gameboard: self.gameboard,
+            gameboardView: self.gameboardView,
+            markPrototype: player.markViewPrototype
+        )
     }
 }
 

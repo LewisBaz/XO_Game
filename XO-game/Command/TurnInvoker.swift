@@ -17,27 +17,13 @@ class TurnInvoker {
     private var gameboard: Gameboard = Gameboard()
     private var gameboardView: GameboardView = GameboardView()
     var commands: [Command] = []
-    private let xViewPlayerTurn = XViewPlayerTurn()
-    private let oViewPlayerTurn = OViewPlayerTurn()
     
     func work() {
-//        self.gameboard.clear()
-//        self.gameboardView.clear()
         self.commands.forEach({ $0.execute() })
     }
     
-    func appendCommandX(position: GameboardPosition) {
-        let turn = XViewPlayerTurn()
-        turn.gameboard = self.gameboard
-        turn.gameboardView = self.gameboardView
-        turn.position = position
-        commands.append(turn)
-    }
-    func appendCommandO(position: GameboardPosition) {
-        let turn = OViewPlayerTurn()
-        turn.gameboard = self.gameboard
-        turn.gameboardView = self.gameboardView
-        turn.position = position
+    func appendCommand(position: GameboardPosition, player: Player, gameboard: Gameboard, gameboardView: GameboardView) {
+        let turn = PlayerTurn(player: player, position: position, gameboard: gameboard, gameboardView: gameboardView)
         commands.append(turn)
     }
 }

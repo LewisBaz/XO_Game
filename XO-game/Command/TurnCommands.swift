@@ -12,34 +12,32 @@ protocol Command {
     func execute()
 }
 
-class XViewPlayerTurn: Command {
+class PlayerTurn: Command {
     
     weak var gameboard: Gameboard?
     weak var gameboardView: GameboardView?
-    var player = Player.first
     var position: GameboardPosition?
-    var markView = XView()
+    var player: Player?
+    var markView: MarkView = XView()
     
-    func execute() {
-        recordEvent(.turnPlayer(player: player, position: position ?? GameboardPosition(column: 3, row: 3)))
-        self.gameboard?.setPlayer(player, at: position ?? GameboardPosition(column: 3, row: 3))
-        self.gameboardView?.placeMarkView(markView, at: position ?? GameboardPosition(column: 3, row: 3))
-        print("x trun")
+    init(player: Player, position: GameboardPosition, gameboard: Gameboard, gameboardView: GameboardView) {
+        self.player = player
+        self.position = position
+        self.gameboard = gameboard
+        self.gameboardView = gameboardView
     }
-}
-
-class OViewPlayerTurn: Command {
-    
-    weak var gameboard: Gameboard?
-    weak var gameboardView: GameboardView?
-    var player = Player.second
-    var position: GameboardPosition?
-    var markView = OView()
     
     func execute() {
-        recordEvent(.turnPlayer(player: player, position: position ?? GameboardPosition(column: 3, row: 3)))
-        self.gameboard?.setPlayer(player, at: position ?? GameboardPosition(column: 3, row: 3))
+        switch player {
+        case .first: markView = XView()
+        case .second: markView = OView()
+        case .none:
+            return
+        }
+        
+        guard (((self.gameboardView?.canPlaceMarkView(at: position!))) != nil) else { return }
+        recordEvent(.turnPlayer(player: player ?? Player.first, position: position ?? GameboardPosition(column: 3, row: 3)))
+        self.gameboard?.setPlayer(player ?? Player.first, at: position ?? GameboardPosition(column: 3, row: 3))
         self.gameboardView?.placeMarkView(markView, at: position ?? GameboardPosition(column: 3, row: 3))
-        print("o trun")
     }
 }

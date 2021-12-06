@@ -11,9 +11,7 @@ import UIKit
 
 protocol GameState {
     var isCompleted: Bool { get }
-    
     func begin()
-    
     func addMark(at position: GameboardPosition)
 }
 
@@ -52,10 +50,7 @@ class PlayerInputGameState: GameState {
         self.gameboard.setPlayer(self.player, at: position)
         self.gameboardView.placeMarkView(markPrototype.copy(), at: position)
         
-        switch player {
-        case .first: turnInvoker.appendCommandX(position: position)
-        case .second: turnInvoker.appendCommandO(position: position)
-        }
+        turnInvoker.appendCommand(position: position, player: player, gameboard: gameboard, gameboardView: gameboardView)
         
         self.isCompleted = true
     }
@@ -197,7 +192,7 @@ class FiveStepsCountGameState: GameState {
     }
 }
 
-class FiveStepsGameRunningStateForXView: GameState {
+class FiveStepsGameRunningState: GameState {
     
     var isCompleted: Bool = false
     
@@ -224,7 +219,6 @@ class FiveStepsGameRunningStateForXView: GameState {
     }
     
     func addMark(at position: GameboardPosition) {
-        
         let steps = Game.steps
     
         UIView.animateKeyframes(
@@ -232,86 +226,44 @@ class FiveStepsGameRunningStateForXView: GameState {
             delay: 0,
             options: .calculationModeLinear,
             animations: {
-                self.checkPositions(steps: steps[0])
-                self.checkPositions(steps: steps[1])
-                self.checkPositions(steps: steps[2])
-                self.checkPositions(steps: steps[3])
-                self.checkPositions(steps: steps[4])
+                switch self.player {
+                case .first:
+                    self.placeMarkIfNeeded(at: steps[0])
+                    self.placeMarkIfNeeded(at: steps[1])
+                    self.placeMarkIfNeeded(at: steps[2])
+                    self.placeMarkIfNeeded(at: steps[3])
+                    self.placeMarkIfNeeded(at: steps[4])
+                case .second:
+                    self.placeMarkIfNeeded(at: steps[5])
+                    self.placeMarkIfNeeded(at: steps[6])
+                    self.placeMarkIfNeeded(at: steps[7])
+                    self.placeMarkIfNeeded(at: steps[8])
+                    self.placeMarkIfNeeded(at: steps[9])
+                }
             },
             completion: { _ in
-                self.gameViewController.showFiveStepsForOView()
-            })
-        self.isCompleted = true
-    }
-    
-    private func checkPositions(steps: GameboardPosition) {
-        guard self.gameboardView.canPlaceMarkView(at: steps) else { return }
-        recordEvent(.turnPlayer(player: self.player, position: steps))
-        self.gameboard.setPlayer(self.player, at: steps)
-        self.gameboardView.placeMarkView(self.markPrototype.copy(), at: steps)
-    }
-}
-
-class FiveStepsGameRunningStateForOView: GameState {
-    
-    var isCompleted: Bool = false
-    
-    let player: Player
-    private unowned let gameViewController: GameViewController
-    private let gameboard: Gameboard
-    private let gameboardView: GameboardView
-    private let markPrototype: MarkView
-    
-    init(player: Player, gameViewController: GameViewController, gameboard: Gameboard, gameboardView: GameboardView, markPrototype: MarkView) {
-        self.player = player
-        self.gameViewController = gameViewController
-        self.gameboard = gameboard
-        self.gameboardView = gameboardView
-        self.markPrototype = markPrototype
-    }
-    
-    func begin() {
-        let isFirstPlayer = self.player == .first
-        self.gameViewController.firstPlayerTurnLabel.isHidden = !isFirstPlayer
-        self.gameViewController.secondPlayerTurnLabel.isHidden = isFirstPlayer
-        
-        self.gameViewController.winnerLabel.isHidden = true
-    }
-    
-    func addMark(at position: GameboardPosition) {
-        
-        let steps = Game.steps
-        
-        UIView.animateKeyframes(
-            withDuration: 1,
-            delay: 0,
-            options: .calculationModeLinear,
-            animations: {
-                self.checkPositions(steps: steps[5])
-                self.checkPositions(steps: steps[6])
-                self.checkPositions(steps: steps[7])
-                self.checkPositions(steps: steps[8])
-                self.checkPositions(steps: steps[9])
-            }, completion: {_ in
-                if let winner = self.gameViewController.referee.determineWinner() {
-                    self.gameViewController.currentState = WinnerGameState(winner: winner, gameViewController: self.gameViewController)
-                    return
+                self.gameViewController.showFiveSteps(player: Player.second, markPrototype: Player.second.markViewPrototype)
+                self.gameViewController.indexToDetermineWinner += 1
+                if self.gameViewController.indexToDetermineWinner == 2 {
+                    if let winner = self.gameViewController.referee.determineWinner() {
+                        self.gameViewController.currentState = WinnerGameState(winner: winner, gameViewController: self.gameViewController)
+                        return
+                    }
                 }
             })
         self.isCompleted = true
     }
     
-    private func checkPositions(steps: GameboardPosition) {
-        if self.gameboard.contains(player: self.player.next, at: steps) {
-            self.gameboardView.removeMarkView(at: steps)
-            self.gameboard.setPlayer(self.player, at: steps)
-            self.gameboardView.placeMarkView(self.markPrototype.copy(), at: steps)
+    private func placeMarkIfNeeded(at position: GameboardPosition) {
+        if self.gameboard.contains(player: self.player.next, at: position) {
+            self.gameboardView.removeMarkView(at: position)
+            self.gameboard.setPlayer(self.player, at: position)
+            self.gameboardView.placeMarkView(self.markPrototype.copy(), at: position)
         } else {
-            guard self.gameboardView.canPlaceMarkView(at: steps) else { return }
-            recordEvent(.turnPlayer(player: self.player, position: steps))
-            self.gameboard.setPlayer(self.player, at: steps)
-            self.gameboardView.placeMarkView(self.markPrototype.copy(), at: steps)
+            guard self.gameboardView.canPlaceMarkView(at: position) else { return }
+            recordEvent(.turnPlayer(player: self.player, position: position))
+            self.gameboard.setPlayer(self.player, at: position)
+            self.gameboardView.placeMarkView(self.markPrototype.copy(), at: position)
         }
     }
 }
-
